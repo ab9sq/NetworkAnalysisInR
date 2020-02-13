@@ -17,22 +17,55 @@ knitr::opts_chunk$set(cache = TRUE)
 knitr::opts_chunk$set(cache.path = "./Cache/")
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+# Libraries and data used
+## Libraries
+```{r, cache=FALSE}
+library(statnet)
+library(UserNetR)
+```
+## Data
+```{r}
+data(Moreno)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+# Simple Visualization
+```{r}
+gender <- Moreno %v% "gender"
+```
+```{r, cache=FALSE}
+plot(Moreno,
+     vertex.col = gender +2,
+     vertex.cex = 1.2)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Basic Description
+## Size 
+```{r}
+network.size(Moreno)
+summary(Moreno, print.adj = FALSE)
+```
+
+## Density
+```{r}
+den_hand <- 2*46/(33*32)
+gden(Moreno)
+```
+
+## components
+```{r}
+components(Moreno)
+```
+
+## Diameter
+```{r}
+lgc <- component.largest(Moreno,
+                         result = "graph")
+gd <- geodist(lgc)
+max(gd$gdist)
+```
+
+
+
+
+
+
