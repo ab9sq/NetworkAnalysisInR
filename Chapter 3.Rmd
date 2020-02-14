@@ -20,6 +20,7 @@ knitr::opts_chunk$set(cache.path = "./Cache/")
 # Libraries and data used
 ## Libraries
 ```{r, cache=FALSE}
+library(UserNetR)
 library(statnet)
 #library(igraph) will be loaded in flow to prevent interferance with statnet
 library(intergraph)
@@ -27,7 +28,8 @@ library(intergraph)
 
 ## Data
 ```{r}
-
+data("ICTS_G10")
+data("DHHS")
 ```
 
 # Creating and managing networks
@@ -105,7 +107,7 @@ as.sociomatrix(netval1)
 ```
 
 ## Creating network object in igraph
-```{r cache=FALSE}
+```{r, cache=FALSE}
 detach(package:statnet, unload = TRUE)
 detach(package:sna, unload = TRUE)
 detach(package:tsna, unload = TRUE)
@@ -131,7 +133,7 @@ summary(inet2)
 ```
 
 ## Going back and forth between statman and igraph
-```{r cache=FALSE}
+```{r, cache=FALSE}
 library(intergraph)
 ```
 ```{r}
@@ -142,7 +144,7 @@ class(net1igraph)
 ```
 
 # importing network data
-```{r cache=FALSE}
+```{r, cache=FALSE}
 detach(package:igraph, unload = TRUE)
 library(statnet)
 ```
@@ -164,4 +166,98 @@ net_import <- network(net.edge,
 summary(net_import)
 gden(net_import)
 ```
+
+# Common network data tasks
+## Filtering networks daved on vertex or edge attribute values
+### Filtering based on Node Values
+```{r}
+n1F <- get.inducedSubgraph(net1,
+                           which(net1 %v% "gender" == "F"))
+n1F[,]
+```
+
+```{r test plot, cache=FALSE}
+gplot(n1F, displaylabels = TRUE)
+```
+
+```{r test}
+deg <- net1 %v% "alldeg"
+n2 <- get.inducedSubgraph(net1, which(deg > 1))
+```
+
+```{r, cache=FALSE}
+gplot(n2, displaylabels = TRUE)
+```
+
+### remove isolates
+```{r, cache=FALSE}
+data("ICTS_G10")
+summary(ICTS_G10, print.adj = FALSE )
+```
+```{r}
+gden(ICTS_G10)
+length(isolates(ICTS_G10))
+n3 <- ICTS_G10
+delete.vertices(n3, isolates(n3))
+gden(n3)
+length(isolates(n3))
+```
+
+### filtering based on edge values
+```{r, cache=FALSE}
+data("DHHS")
+summary(DHHS, print.adj = FALSE )
+```
+```{r}
+d <- DHHS
+gden(d)
+op <- par(mar = rep(0,4))
+gplot(d,
+      gmode = "graph",
+      edge.lwd = d %e% 'collab',
+      edge.col = "grey50",
+      vertex.col = "lightblue",
+      vertex.cex = 1.0,
+      vertex.sides = 20)
+par(op)
+as.sociomatrix(d)[1:6,1:6]
+table(d %e% "collab")
+d.val <- as.sociomatrix(d, attrname = "collab")
+d.val[d.val < 3] <-  0
+d.filt <- as.network(d.val,
+                     directed = FALSE,
+                     matrix.type = "a",
+                     ignore.eval = FALSE,
+                     names.eval = "collab")
+summary(d.filt, print.adj = FALSE)
+gden(d.filt)
+op <- par(mar = rep(0,4))
+gplot(d.filt,
+      gmode = "graph",
+      displaylabels = TRUE,
+      vertex.col = "lightblue",
+      vertex.cex = 1.3,
+      label.cex = 0.4,
+      label.pos = 5,
+      displayisolates = FALSE)
+par(op)
+op <- par(mar = rep(0,4))
+d.val <- as.sociomatrix(d, attrname = "collab")
+gplot(d.val,
+      gmode = "graph",
+      thresh = 2,
+      displaylabels = TRUE,
+      vertex.col = "lightblue",
+      vertex.cex = 1.3,
+      label.cex = 0.4,
+      label.pos = 5,
+      displayisolates = FALSE)
+par(op)
+```
+
+## transformining directed to non-directed network
+```{r}
+
+```
+
 
