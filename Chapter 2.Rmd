@@ -64,8 +64,8 @@ gd <- geodist(lgc)
 max(gd$gdist)
 ```
 
-
-
-
-
-
+## Clustering coef
+```{r}
+gtrans(Moreno,
+       mode = "graph")
+```
