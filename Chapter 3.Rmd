@@ -20,9 +20,144 @@ knitr::opts_chunk$set(cache.path = "./Cache/")
 # Libraries and data used
 ## Libraries
 ```{r, cache=FALSE}
-
+library(statnet)
+#library(igraph) will be loaded in flow to prevent interferance with statnet
+library(intergraph)
 ```
+
 ## Data
 ```{r}
 
 ```
+
+# Creating and managing networks
+# creating net in netstat
+```{r}
+netmat1 <- rbind(c(0,1,1,0,0),
+                 c(0,0,1,1,0),
+                 c(0,1,0,0,0),
+                 c(0,0,0,0,0),
+                 c(0,0,1,0,0))
+rownames(netmat1) <- c("A","B","C","D","E")
+colnames(netmat1) <- c("A","B","C","D","E")
+net1 <- network(netmat1, matrix.type = "adjacency")
+class(net1)
+summary(net1)
+```
+```{r, cache=FALSE}
+gplot(net1,
+      vertex.col = 2,
+      displaylabels = TRUE)
+```
+```{r}
+netmat2 <- rbind(c(1,2),
+                 c(1,3),
+                 c(2,3),
+                 c(2,4),
+                 c(3,2),
+                 c(5,3))
+net2 <- network(netmat2,
+                matrix.type = "edgelist")
+network.vertex.names(net2) <- c("A","B","C","D","E")
+summary(net2)
+as.sociomatrix(net1)
+class(as.sociomatrix(net1))
+all(as.matrix(net1) == as.sociomatrix(net1))
+as.matrix(net1, matrix.type = "edgelist")
+```
+
+## Managing Node and Tie Attribures
+### Node attrib
+```{r}
+set.vertex.attribute(net1, 
+                     "gender",
+                     c("F","F","M","F","M"))
+net1 %v% "alldeg" <- degree(net1)
+list.vertex.attributes(net1)
+summary(net1)
+get.vertex.attribute(net1, "gender")
+net1 %v% "alldeg"
+```
+
+### Tie Attrib
+```{r}
+list.edge.attributes(net1)
+set.edge.attribute(net1,
+                   "rndval",
+                   runif(network.size(net1),0,1))
+list.edge.attributes(net1)
+summary(net1 %e% "rndval")
+summary(get.edge.attribute(net1, "rndval"))
+netval1 <- rbind(c(0,2,3,0,0),
+                 c(0,0,3,1,0),
+                 c(0,1,0,0,0),
+                 c(0,0,0,0,0),
+                 c(0,0,2,0,0))
+netval1 <- network(netval1,
+                   matrix.type = "adjacency",
+                   ignore.eval = FALSE,
+                   names.eval = "like")
+network.vertex.names(netval1) <- c("A","B","C","D","E")
+list.edge.attributes(netval1)
+get.edge.attribute(netval1, "like")
+as.sociomatrix(netval1)
+as.sociomatrix(netval1)
+```
+
+## Creating network object in igraph
+```{r}
+detach(package:statnet, unload = TRUE)
+detach(package:sna, unload = TRUE)
+detach(package:tsna, unload = TRUE)
+detach(package:ergm.count, unload = TRUE)
+detach(package:tergm, unload = TRUE)
+detach(package:networkDynamic, unload = TRUE)
+detach(package:ergm, unload = TRUE)
+detach(package:network, unload = TRUE)
+detach(package:statnet.common, unload = TRUE)
+library(igraph)
+inet1 <- graph.adjacency(netmat1)
+class(inet1)
+summary(inet1)
+#str(inet1)
+inet2 <- graph.edgelist(netmat2)
+summary(inet2)
+V(inet2)$name <- c("A","B","C","D","E")
+E(inet2)$val <- c(1:6)
+summary(inet2)
+#str(inet2)
+```
+
+## Going back and forth between statman and igraph
+```{r}
+library(intergraph)
+class(net1)
+net1igraph <- asIgraph(net1)
+class(net1igraph)
+#str(net1igraph)
+```
+
+# importing network data
+```{r}
+detach(package:igraph, unload = TRUE)
+library(statnet)
+```
+```{r}
+netmat3 <- rbind(c("A","B"),
+                 c("A","C"),
+                 c("B","C"),
+                 c("B","D"),
+                 c("C","B"),
+                 c("E","C"))
+net.df <- data.frame(netmat3)
+net.df
+write.csv(net.df,
+          file = "MyData.csv",
+          row.names = FALSE)
+net.edge <- read.csv(file = "MyData.csv")
+net_import <- network(net.edge,
+                      matrix.type = "edgelist")
+summary(net_import)
+gden(net_import)
+```
+
