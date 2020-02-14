@@ -105,7 +105,7 @@ as.sociomatrix(netval1)
 ```
 
 ## Creating network object in igraph
-```{r}
+```{r cache=FALSE}
 detach(package:statnet, unload = TRUE)
 detach(package:sna, unload = TRUE)
 detach(package:tsna, unload = TRUE)
@@ -116,6 +116,8 @@ detach(package:ergm, unload = TRUE)
 detach(package:network, unload = TRUE)
 detach(package:statnet.common, unload = TRUE)
 library(igraph)
+```
+```{r}
 inet1 <- graph.adjacency(netmat1)
 class(inet1)
 summary(inet1)
@@ -129,8 +131,10 @@ summary(inet2)
 ```
 
 ## Going back and forth between statman and igraph
-```{r}
+```{r cache=FALSE}
 library(intergraph)
+```
+```{r}
 class(net1)
 net1igraph <- asIgraph(net1)
 class(net1igraph)
@@ -138,7 +142,7 @@ class(net1igraph)
 ```
 
 # importing network data
-```{r}
+```{r cache=FALSE}
 detach(package:igraph, unload = TRUE)
 library(statnet)
 ```
