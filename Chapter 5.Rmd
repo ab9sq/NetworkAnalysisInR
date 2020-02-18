@@ -1,5 +1,5 @@
 ---
-title: "Chapter 4"
+title: "Chapter 5"
 author: "Nick Lauerman"
 date: ""
 output: 
@@ -21,12 +21,77 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Libraries
 ```{r}
 library(UserNetR)
-
+library(statnet)
+library(RColorBrewer)
 ```
 
 ## Data
 ```{r}
+data("Bali")
+```
 
+# basic principles
+# design Elements
+## node color
+```{r}
+gplot(Bali,
+      vertex.col = "slateblue2",
+      gmode = "graph")
+col2rgb('slateblue2')
+gplot(Bali,
+      vertex.col = rgb(122, 103, 238,
+                       maxColorValue = 255),
+      gmode = "graph")
+gplot(Bali,
+      vertex.col = "#7A67EE",
+      gmode = "graph")
+ndum <- rgraph(300,
+               tprob = 0.025,
+               mode = "graph")
+op <- par(mar = c(0, 0, 2, 0),
+          mfrow = c(1, 2))
+gplot(ndum,
+      gmode = "graph",
+      vertex.cex = 2,
+      vertex.col = rgb(0, 0, 139,
+                       maxColorValue = 255),
+      edge.col = "grey80",
+      edge.lwd = 0.5,
+      main = "Fully Opaque")
+
+gplot(ndum,
+      gmode = "graph",
+      vertex.cex = 2,
+      vertex.col = rgb(0, 0, 139,
+                       maxColorValue = 255,
+                       alpha = 80),
+      edge.col = "grey80",
+      edge.lwd = 0.5,
+      main = "Partly Transparent")
+par(op)
+
+rolelab <- get.vertex.attribute(Bali,
+                                "role")
+op <- par(mar = c(0, 0, 0, 0))
+plot(Bali,
+     usearrows = FALSE,
+     vertex.cex = 1.5,
+     label = rolelab,
+     displaylabels = TRUE,
+     vertex.col = "role")
+par(op)
+
+palette()
+
+display.brewer.pal(5, "Dark2")
+
+my_pal <- brewer.pal(5, "Dark2")
+rolecat <- as.factor(get.vertex.attribute(Bali, "role"))
+plot(Bali,
+     vertex.cex = 1.5,
+     label = rolelab,
+     displaylabels = TRUE,
+     vertex.col = my_pal[rolecat])
 ```
 
 
