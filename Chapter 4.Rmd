@@ -21,14 +21,28 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Libraries
 ```{r}
 library(UserNetR)
-
+library(statnet)
 ```
 
 ## Data
 ```{r}
-
+data("Moreno")
 ```
 
+# chanlage of net vis
+```{r}
+data("Moreno")
+op <- par(mar = rep(0, 4),
+          mfrow = c(1, 2))
+plot(Moreno,
+     mode = "circle",
+     vertex.cex = 1.5)
+plot(Moreno,
+     mode = "fruchtermanreingold",
+     vertex.cex = 1.5)
+par(op)
+```
 
+# Aesthetics of Network Layouts
 
 
