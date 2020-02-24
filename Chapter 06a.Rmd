@@ -1,5 +1,5 @@
 ---
-title: "Advanced Network Graphics part 1"
+title: "Advanced Network Graphics part A"
 author: "Nick Lauerman"
 date: ""
 output: 
@@ -19,16 +19,49 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Libraries and data used
 ## Libraries
+Package archdiagram isntall from github
 ```{r}
 library(UserNetR)
-
+library(arcdiagram)
+library(igraph)
+library(intergraph)
 ```
 
 ## Data
 ```{r}
-
+data(Simpsons) # from UserNetR
 ```
 
+# specialized network diagrams
+## arch diagrams
+```{r}
+iSimp <- asIgraph(Simpsons)
+simp_edge <- get.edgelist(iSimp)
+arcplot(simp_edge)
+
+s_grp <- V(iSimp)$group
+s_col <- c("#a6611a",
+           "#dfc27d",
+           "#80cdc1",
+           "#018571")
+cols <- s_col[s_grp]
+node_deg <- degree(iSimp)
+
+arcplot(simp_edge,
+        lwd.arcs = 2,
+        cex.nodes = node_deg/2,
+        labels = V(iSimp)$vertex.names,
+        col.labels = "darkgreen",
+        font = 1,
+        pch.nodes = 21,
+        line = 1,
+        col.nodes = cols,
+        bg.nodes = cols,
+        show.nodes = TRUE)
+```
+
+## cord diagrams
+Continued in port B to clear out library conflicts.
 
 
 
