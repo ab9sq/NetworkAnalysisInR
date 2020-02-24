@@ -1,5 +1,5 @@
 ---
-title: "Advanced Network Graphics"
+title: "Advanced Network Graphics part b"
 author: "Nick Lauerman"
 date: ""
 output: 
