@@ -1,5 +1,5 @@
 ---
-title: "Subgroups \n Chapter 4"
+title: "Subgroups \n Chapter 8"
 author: "Nick Lauerman"
 date: ""
 output: 
