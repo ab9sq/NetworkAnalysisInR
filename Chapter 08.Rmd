@@ -27,7 +27,9 @@ library(intergraph)
 
 ## Data
 ```{r}
-data(DHHS)
+data("DHHS")
+data("Moreno")
+data("Facebook")
 ```
 
 # Social Cohesion
@@ -166,5 +168,44 @@ plot(iDHHS6_6,
 par(op)
 ```
 
+# Community Detectiom
+## Modularity
+```{r}
+g1 <- graph.formula(A-B-C-A,
+                    D-E-F-D,
+                    G-H-I-G,
+                    A-D-G-A)
+V(g1)$grp_good <- c(1,1,1,2,2,2,3,3,3)
+V(g1)$grp_bad <-  c(1,2,3,2,3,1,3,1,2)
+op <- par(mfrow = c(1,2))
+plot(g1,
+     vertex.color = (V(g1)$grp_good),
+     vertex.size = 20,
+     main = "Good Grouping")
+plot(g1,
+     vertex.color = (V(g1)$grp_bad),
+     vertex.size = 20,
+     main = "Bad Grouping")
+par(op)
+modularity(g1,
+           V(g1)$grp_good)
+modularity(g1,
+           V(g1)$grp_bad)
+data(DHHS)
+iDHHS <- asIgraph(DHHS)
+table(V(iDHHS)$agency)
+V(iDHHS)[1:10]$agency
+modularity(iDHHS,
+           (V(iDHHS)$agency + 1))
+data("Moreno")
+iMoreno <- asIgraph(Moreno)
+table(V(iMoreno)$gender)
+modularity(iMoreno,
+           V(iMoreno)$gender)
+data("Facebook")
+levels(factor(V(Facebook)$group))
+grp_mun <- as.numeric(factor(V(Facebook)$group))
+modularity(Facebook, grp_mun)
+```
 
 
