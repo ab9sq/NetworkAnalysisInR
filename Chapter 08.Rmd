@@ -208,4 +208,8 @@ grp_mun <- as.numeric(factor(V(Facebook)$group))
 modularity(Facebook, grp_mun)
 ```
 
+## Community Detection Algorithms
+```{r}
+
+```
 
