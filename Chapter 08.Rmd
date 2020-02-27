@@ -22,12 +22,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(UserNetR)
 library(igraph)
+library(intergraph)
 ```
 
 ## Data
 ```{r}
-
-
+data(DHHS)
 ```
 
 # Social Cohesion
@@ -101,6 +101,70 @@ clqinfo <- data.frame(
 clqinfo
 ```
 
+## k-Cores
+```{r}
+data(DHHS)
+iDHHS <- asIgraph(DHHS)
+graph.density(iDHHS)
+iDHHS <- subgraph.edges(iDHHS,
+                        E(iDHHS)[collab > 2])
+graph.density(iDHHS)
+coreness <- graph.coreness(iDHHS)
+table(coreness)
+maxCoreness <- max(coreness)
+maxCoreness
+Vname <- get.vertex.attribute(iDHHS,
+                              name = "vertex.names",
+                              index = V(iDHHS))
+V(iDHHS)$name <- Vname
+V(iDHHS)$color <- coreness + 1
+op <- par(mar = rep(0,4))
+plot(iDHHS,
+     vertex.label.cex = 0.8)
+par(op)
+colors <- rainbow(maxCoreness)
+op <- par(mar = rep(0,4))
+plot(iDHHS,
+     vertex.label = coreness,
+     vertex.color = colors[coreness])
+par(op)
+
+V(iDHHS)$name <- coreness
+V(iDHHS)$color <- colors[coreness]
+iDHHS1_6 <- iDHHS
+iDHHS2_6 <- induced.subgraph(iDHHS,
+                             vids = which(coreness > 1))
+iDHHS3_6 <- induced.subgraph(iDHHS,
+                             vids = which(coreness > 2))
+iDHHS4_6 <- induced.subgraph(iDHHS,
+                             vids = which(coreness > 3))
+iDHHS5_6 <- induced.subgraph(iDHHS,
+                             vids = which(coreness > 4))
+iDHHS6_6 <- induced.subgraph(iDHHS,
+                             vids = which(coreness > 5))
+lay <- layout.fruchterman.reingold(iDHHS)
+op <- par(mfrow = c(3,2),
+          mar = c(3, 0, 2, 0))
+plot(iDHHS1_6,
+     layout = lay,
+     main = "All k-cores")
+plot(iDHHS2_6,
+     layout = lay[which(coreness > 1), ],
+     main = "k-cores 2-6")
+plot(iDHHS3_6,
+     layout = lay[which(coreness > 2), ],
+     main = "k-cores 3-6")
+plot(iDHHS4_6,
+     layout = lay[which(coreness > 3), ],
+     main = "k-cores 4-6")
+plot(iDHHS5_6,
+     layout = lay[which(coreness > 4), ],
+     main = "k-cores 5-6")
+plot(iDHHS6_6,
+     layout = lay[which(coreness > 5), ],
+     main = "k-cores 6-6")
+par(op)
+```
 
 
 
