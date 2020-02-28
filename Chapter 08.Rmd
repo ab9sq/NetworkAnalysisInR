@@ -30,6 +30,7 @@ library(intergraph)
 data("DHHS")
 data("Moreno")
 data("Facebook")
+data("Bali")
 ```
 
 # Social Cohesion
