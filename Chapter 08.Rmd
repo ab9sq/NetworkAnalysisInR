@@ -210,6 +210,98 @@ modularity(Facebook, grp_mun)
 
 ## Community Detection Algorithms
 ```{r}
+cw <- cluster_walktrap(iMoreno)
+membership(cw)
+modularity(cw)
+plot(cw, iMoreno)
 
+cw <- cluster_walktrap(iDHHS)
+modularity(cw)
+membership(cw)
+table(V(iDHHS)$agency,
+      membership(cw))
+
+data("Bali")
+iBali <- asIgraph(Bali)
+
+cw <- cluster_walktrap(iBali)
+modularity(cw)
+membership(cw)
+
+ceb <- cluster_edge_betweenness(iBali)
+modularity(ceb)
+membership(ceb)
+
+cs <- cluster_spinglass(iBali)
+modularity(cs)
+membership(cs)
+
+cfg <- cluster_fast_greedy(iBali)
+modularity(cfg)
+membership(cfg)
+
+clp <- cluster_label_prop(iBali)
+modularity(clp)
+membership(clp)
+
+cle <- cluster_leading_eigen(iBali)
+modularity(cle)
+membership(cle)
+
+cl <- cluster_louvain(iBali)
+modularity(cl)
+membership(cl)
+
+co <- cluster_optimal(iBali)
+modularity(co)
+membership(co)
+
+table(V(iBali)$role,
+      membership(cw))
 ```
+```{r}
+compare(as.numeric(factor(V(iBali)$role)),
+                          cw,
+                          method = "adjusted.rand")
+compare(cw,
+        ceb,
+        method = "adjusted.rand")
+compare(cw,
+        cs,
+        method = "adjusted.rand")
+compare(cw,
+        cfg,
+        method = "adjusted.rand")
+```
+```{r}
+op <- par(mfrow = c(3,2),
+          mar = c(3, 0, 2, 0))
+plot(ceb,
+     iBali,
+     vertex.label = V(iBali)$role,
+     main = "Edge Betweeness")
+plot(cfg,
+     iBali,
+     vertex.label = V(iBali)$role,
+     main = "Fastgreedy")
+plot(clp,
+     iBali,
+     vertex.label = V(iBali)$role,
+     main = "Label Propagation")
+plot(cle,
+     iBali,
+     vertex.label = V(iBali)$role,
+     main = "Leading Eigenvector")
+plot(cs,
+     iBali,
+     vertex.label = V(iBali)$role,
+     main = "Spinglass")
+plot(cw,
+     iBali,
+     vertex.label = V(iBali)$role,
+     main = "Walktrap")
+par(op)
+```
+
+
 
