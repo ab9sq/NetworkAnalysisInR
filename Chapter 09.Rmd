@@ -21,14 +21,195 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Libraries
 ```{r}
 library(UserNetR)
-
+library(igraph)
 ```
 
 ## Data
 ```{r}
-
+data(hwd)
 ```
 
+# defining affiliation netwirks
+## affiliation as 2-mode networks
+```{r}
+C1 <- c(1,1,1,0,0,0)
+C2 <- c(0,1,1,1,0,0)
+C3 <- c(0,0,1,1,1,0)
+C4 <- c(0,0,0,0,1,1)
+aff.df <- data.frame(C1,C2,C3,C4)
+rownames(aff.df) <- c("S1","S2","S3","S4","S5","S6")
+aff.df
+```
+
+## bipartite graphs
+```{r}
+bn <- graph.incidence(aff.df)
+plt.x <- c(rep(2,6),
+           rep(4,4))
+plt.y <- c(7:2,
+           6:3)
+lay <- as.matrix(cbind(plt.x,
+                       plt.y))
+
+shapes <- c("circle",
+            "square")
+colors <- c("blue",
+            "red")
+plot(bn,
+     vertex.color = colors[V(bn)$type + 1],
+     vertex.shape = shapes[V(bn)$type + 1],
+     vertex.size = 10,
+     vertex.label.degree = -pi/2,
+     vertex.label.dist = 1.2,
+     vertex.label.cex = 0.9,
+     layout = lay)
+```
+
+# Affiliation Network Basics
+## creating affiliation networks from incudence matrices
+```{r}
+bn <- graph.incidence(aff.df)
+bn
+get.incidence(bn)
+V(bn)$type
+V(bn)$name
+```
+
+##Creating Affiliation network from edge list
+```{r}
+el.df <- data.frame(rbind(c("S1","C1"),
+                          c("S2","C1"),
+                          c("S2","C2"),
+                          c("S3","C1"),
+                          c("S3","C2"),
+                          c("S3","C3"),
+                          c("S4","C2"),
+                          c("S4","C3"),
+                          c("S5","C3"),
+                          c("S5","C4"),
+                          c("S6","C4")))
+el.df
+bn2 <- graph.data.frame(el.df,
+                        directed = FALSE)
+bn2
+V(bn2)$type <- V(bn2)$name %in% el.df[ ,1]
+bn2
+graph.density(bn) == graph.density(bn2)
+                    
+```
+
+## plotting Affiliation networks
+```{r}
+shapes <- c("circle",
+            "square")
+colors <- c("blue",
+            "red")
+plot(bn,
+     vertex.color = colors[V(bn)$type + 1],
+     vertex.shape = shapes[V(bn)$type + 1],
+     vertex.size = 10,
+     vertex.label.degree = -pi/2,
+     vertex.label.dist = 1.2,
+     vertex.label.cex = 0.9)
+
+bn.pr <- bipartite.projection(bn)
+bn.pr
+graph.density(bn.pr$proj1)
+bn.students <- bn.pr$proj1
+bn.class <- bn.pr$proj2
+graph.density(bn.students)
+get.adjacency(bn.students,
+              sparse = FALSE,
+              attr = "weight")
+get.adjacency(bn.class,
+              sparse = FALSE,
+              attr = "weight")
+
+op <- par(mfrow = c(1,2))
+plot(bn.students,
+     vertex.color = "blue",
+     vertex.shape = "circle",
+     main = "Students",
+     edge.width = E(bn.students)$weight * 2,
+     vertex.size = 15,
+     vertex.label.degree = -pi/2,
+     vertex.label.dist = 1.2,
+     vertex.label.cex = 1)
+plot(bn.class,
+     vertex.color = "red",
+     vertex.shape = "square",
+     main = "Class",
+     edge.width = E(bn.students)$weight * 2,
+     vertex.size = 15,
+     vertex.label.degree = -pi/2,
+     vertex.label.dist = 1.2,
+     vertex.label.cex = 1)
+par(op)
+```
+
+# **examples**
+# Hollywood Actors as an affiliation network
+```{r}
+data(hwd)
+h1 <- hwd
+h1
+V(h1)$name[1:10]
+V(h1)$type[1:10]
+V(h1)$IMDBrating[1:10]
+V(h1)$name[155:165]
+
+V(h1)$shape <- ifelse(V(h1)$type == TRUE,
+                      "square",
+                      "circle")
+V(h1)$shape[1:10]
+V(h1)$color <- ifelse(V(h1)$type == TRUE,
+                      "red",
+                      "lightblue")
+h2 <- subgraph.edges(h1,
+                     E(h1)[inc(V(h1)[name %in% 
+                                       c("The Wolf of Wall Street",
+                                         "Gangs of New York",
+                                         "The Departed")])])
+plot(h2,
+     layout = layout_with_kk)
+
+graph.density(h1)
+table(degree(h1, v=V(h1)[type==FALSE]))
+mean(degree(h1, v=V(h1)[type==FALSE]))
+V(h1)$deg <- degree(h1)
+V(h1)[type == FALSE & deg > 4]$name
+busy_actor <- data.frame(cbind(
+  Actor = V(h1)[type == FALSE & deg > 4]$name,
+  Movies = V(h1)[type == FALSE & deg >4]$deg
+))
+busy_actor[order(busy_actor$Movies, 
+                 decreasing = TRUE), ]
+for(i in 161:1365){
+  V(h1)[i]$totrating <- sum(V(h1)[nei(i)]$IMDBrating)
+}
+max(V(h1)$totrating, na.rm = TRUE)
+pop_actor <- data.frame(cbind(
+  Actor = V(h1)[type == FALSE &
+                  totrating > 40]$name,
+  Popularity = V(h1)[type == FALSE &
+                       totrating > 40]$totrating))
+pop_actor[order(pop_actor$Popularity,
+                decreasing = TRUE), ]
+
+for(i in 161:1365){
+  V(h1)[i]$avgrating <- mean(V(h1)[nei(i)]$IMDBrating)
+}
+num <- V(h1)[type == FALSE]$deg
+avgpop <- V(h1)[type == FALSE]$avgrating
+summary(lm(avgpop ~ num))
+scatter.smooth(num,
+               avgpop,
+               col = "lightblue",
+               ylim = c(2, 10),
+               span = 0.8,
+               xlab = "Number of Movies",
+               ylab = "Avg. Popularity")
+```
 
 
 
