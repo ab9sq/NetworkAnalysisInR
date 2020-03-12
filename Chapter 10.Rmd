@@ -1,0 +1,18 @@
+---
+title: "Random Network Models - Chapter 10"
+author: "Nick Lauerman"
+date: "Started 12-Mar-2020"
+output: 
+  pdf_document: 
+    fig_caption: yes
+    fig_height: 6.5
+    fig_width: 6.5
+    toc: yes
+    toc_depth: 5
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#
