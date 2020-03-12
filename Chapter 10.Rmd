@@ -20,11 +20,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(igraph)
 library(lattice)
+#library(ergmharris)
 ```
 
 ## data sets used
 ```{r}
-
+#data("lhds")
 ```
 
 # Models of Network Structures and Formation
@@ -162,5 +163,101 @@ lines(smoothingSpline,
 ```
 
 
+## Scale-Free Models
+```{r}
+# from chapter 5
+rescale <- function(nchar, low, high){
+  min_d <- min(nchar)
+  max_d <- max(nchar)
+  rscl <- ((high - low) * (nchar - min_d)) /
+    (max_d - min_d) + low
+  return(rscl)
+}
+```
 
+```{r, cache=TRUE, cache.path="./Cache/"}
+g <- barabasi.game(500,
+                   directed = FALSE)
+V(g)$color <- "lightblue"
+V(g)[degree(g) > 9]$color <- "red"
+node_size <- rescale(nchar = degree(g),
+                     low = 2,
+                     high = 8)
+```
+```{r}
+plot(g,
+     vertex.label = NA,
+     vertex.size = node_size)
+```
+```{r, cache=TRUE, cache.path="./Cache/"}
+median(degree(g))
+mean(degree(g))
+table(degree(g))
+```
+```{r}
+op <- par(mfrow = c(1,2))
+plot(degree.distribution(g),
+     xlab = "Degree",
+     ylab = "Proportion")
+plot(degree.distribution(g),
+     log = "xy",
+     xlab = "Degree",
+     ylab = "Proportion")
+par(op)
+```
+```{r, cache=TRUE, cache.path="./Cache/"}
+g <- barabasi.game(500,
+                   out.dist = c(0.25, 0.5, 0.25),
+                   directed = FALSE,
+                   zero.appeal = 1)
+V(g)$color <- "lightblue"
+V(g)[degree(g) > 9]$color <- "red"
+node_size <- rescale(nchar = degree(g),
+                     low = 2,
+                     high = 8)
+```
+```{r}
+plot(g,
+     vertex.label = NA,
+     vertex.size = node_size)
+```
+```{r, cache=TRUE, cache.path="./Cache/"}
+g1 <- barabasi.game(10, 
+                    m = 1,
+                    directed = FALSE)
+g2 <- barabasi.game(25, 
+                    m = 1,
+                    directed = FALSE)
+g3 <- barabasi.game(50, 
+                    m = 1,
+                    directed = FALSE)
+g4 <- barabasi.game(100, 
+                    m = 1,
+                    directed = FALSE)
+```
+```{r}
+op <- par(mfrow = c(2,2),
+          mar = c(4, 0, 1, 0))
+plot(g1,
+     vertex.label = NA,
+     vertex.size = 3,
+     xlab = " n = 10")
+plot(g2,
+     vertex.label = NA,
+     vertex.size = 3,
+     xlab = " n = 25")
+plot(g3,
+     vertex.label = NA,
+     vertex.size = 3,
+     xlab = " n = 50")
+plot(g4,
+     vertex.label = NA,
+     vertex.size = 3,
+     xlab = " n = 100")
+par(op)
+```
+
+# Compairing Random Models to Emperical models
+
+Required data set not availble!
 
