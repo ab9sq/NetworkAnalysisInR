@@ -149,6 +149,8 @@ par(op)
 
 # **examples**
 # Hollywood Actors as an affiliation network
+## Analysis of Entire Hollywood Affiliation Network
+
 ```{r}
 data(hwd)
 h1 <- hwd
@@ -211,5 +213,49 @@ scatter.smooth(num,
                ylab = "Avg. Popularity")
 ```
 
+## Analysis of Actor and Movie Projections
+```{r}
+h1.pr <- bipartite.projection(h1)
+h1.act <- h1.pr$proj1
+h1.mov <- h1.pr$proj2
+h1.act
+h1.mov
+
+op <- par(mar = rep(0,4))
+plot(h1.mov,
+     vertex.color = "red",
+     vertex.shape = "circle",
+     vertex.size = (V(h1.mov)$IMDBrating) - 3,
+     vertex.label = NA)
+par(op)
+
+graph.density(h1.mov)
+no.clusters(h1.mov)
+clusters(h1.mov)$csize
+table(E(h1.mov)$weight)
+
+h2.mov <- induced.subgraph(h1.mov,
+                           vids = clusters(h1.mov)$membership == 1)
+plot(h2.mov,
+     vertex.color = "red",
+     edge.width = sqrt(E(h1.mov)$weight),
+     vertex.shape = "circle",
+     vertex.size = (V(h2.mov)$IMDBrating) - 3,
+     vertex.label = NA)
+
+table(graph.coreness(h2.mov))
+h3.mov <- induced.subgraph(h2.mov,
+                           vids = graph.coreness(h2.mov) > 4)
+h3.mov
+
+plot(h3.mov,
+     vertex.color = "red",
+     vertex.shape = "circle",
+     edge.width = sqrt(E(h1.mov)$weight),
+     vertex.label.cex = 0.7,
+     vertex.label.color = "darkgreen",
+     vertex.label.distance = 0.3,
+     vertex.size = (V(h3.mov)$IMDBrating) - 3)
+```
 
 
