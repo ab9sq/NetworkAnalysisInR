@@ -20,12 +20,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(igraph)
 library(lattice)
+library(UserNetR)
 #library(ergmharris)
 ```
 
 ## data sets used
 ```{r}
-#data("lhds")
+data("lhds")
 ```
 
 # Models of Network Structures and Formation
@@ -259,5 +260,28 @@ par(op)
 
 # Compairing Random Models to Emperical models
 
-Required data set not availble!
+```{r, cache=TRUE, cache.path="./Cache/", eval=FALSE}
+data(lhds)
+
+ilhds <- as.igraph(lhds)  # asIgraph in book is unknown as.igraph is in the igrapp package but returns an error
+ilhds
+graph.density(ilhds)
+mean(degree(ilhds))
+g_rnd <- erdos.renyi.game(1283,
+                          0.0033,
+                          type = "gnp")
+g_smwrld <- watts.strogatz.game(dim = 1,
+                                size = 1283,
+                                nei = 2,
+                                p = 0.25)
+g_prfatt <- barabasi.game(1283,
+                          out.dist = c(0.15,
+                                       0.6,
+                                       0.25),
+                          directed = FALSE,
+                          zero.appeal = 2)
+
+  
+```
+
 

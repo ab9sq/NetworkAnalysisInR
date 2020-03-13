@@ -1,0 +1,31 @@
+---
+title: "Statistical Network Models - Chapter 11"
+author: "Nick Lauerman"
+date: "3/13/2020"
+output: 
+  pdf_document: 
+    fig_caption: yes
+    fig_height: 6.5
+    fig_width: 6.5
+    toc: yes
+    toc_depth: 6
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Libraries and Data
+## Libraries
+```{r}
+
+```
+
+## Data
+```{r}
+
+```
+
+
+
+
